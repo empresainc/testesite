@@ -1,77 +1,436 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Busca no Discord</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #1e1e2f;
-      color: white;
-      padding: 20px;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      margin-right: 10px;
-    }
-    .message {
-      border: 1px solid #444;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 8px;
-      background: #2c2c3a;
-    }
-    .message .author {
-      font-weight: bold;
-    }
-    .message .meta {
-      font-size: 12px;
-      color: #ccc;
-    }
-  </style>
-</head>
-<body>
-  <h1>Buscar mensagens públicas do Discord</h1>
-
-  <input type="text" id="searchInput" placeholder="Digite algo..." />
-  <button onclick="buscar()">Buscar</button>
-
-  <div id="resultados"></div>
-
-  <script>
-    async function buscar() {
-      const termo = document.getElementById('searchInput').value;
-      const container = document.getElementById('resultados');
-      container.innerHTML = '<p>Buscando...</p>';
-
-      try {
-        const res = await fetch(`https://cordsearch.vercel.app/api/search?q=${encodeURIComponent(termo)}&limit=10`);
-        const dados = await res.json();
-
-        container.innerHTML = '';
-
-        if (dados.length === 0) {
-          container.innerHTML = '<p>Nenhuma mensagem encontrada.</p>';
-          return;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Server Tags</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e2f;
+            color: #fff;
+            margin: 0;
+            padding: 0;
         }
 
-        dados.forEach(msg => {
-          const el = document.createElement('div');
-          el.className = 'message';
-          el.innerHTML = `
-            <div class="author">${msg.author.name}</div>
-            <div class="meta">Servidor: ${msg.guild.name} | Canal: #${msg.channel.name}</div>
-            <div class="content">${msg.content}</div>
-            <div class="meta">${new Date(msg.timestamp).toLocaleString()}</div>
-          `;
-          container.appendChild(el);
+        center {
+            margin-top: 15px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #2a2a3b;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+        }
+
+        .intro {
+            margin-top: 10px;
+            font-size: 1.2em;
+            color: #ccc;
+        }
+
+        .publish-button,
+        .support-button {
+            background-color: #ffcc00;
+            color: #000;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        table {
+            width: 90%;
+            margin: 0 auto 40px auto;
+            border-collapse: collapse;
+            background-color: #2a2a3b;
+            border: 1px solid #444;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+
+        th {
+            background-color: #3a3a4d;
+        }
+
+        tr:hover {
+            background-color: #333348;
+        }
+
+        a {
+            color: #00b7ff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .new {
+            color: red;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+
+        /* submit form */
+        .submit-section {
+            background-color: #2b2d31;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 75%;
+        }
+
+        .submit-section h2 {
+            color: #5865f2;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .submit-section p {
+            color: #dcddde;
+            margin-bottom: 20px;
+        }
+
+        #tag-submit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .input-group label {
+            color: #dcddde;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            background-color: #36393f;
+            border: 1px solid #202225;
+            border-radius: 4px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 1em;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #5865f2;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.3);
+        }
+
+        .submit-button {
+            background-color: #5865f2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 12px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .submit-button:hover {
+            background-color: #4752c4;
+        }
+
+        .submit-button:disabled {
+            background-color: #3c3f5c;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .submission-status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .submission-status.loading {
+            display: block;
+            background-color: #36393f;
+            color: #dcddde;
+        }
+
+        .submission-status.success {
+            display: block;
+            background-color: #43b581;
+            color: white;
+        }
+
+        .submission-status.error {
+            display: block;
+            background-color: #f04747;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .submit-section {
+                padding: 15px;
+                margin: 15px 0;
+            }
+
+            .submit-section h2 {
+                font-size: 1.5em;
+            }
+
+            .input-group input,
+            .submit-button {
+                padding: 10px 14px;
+            }
+        }
+
+        .icon {
+            margin-right: 5px;
+            height: 16px;
+            width: 16px;
+        }
+
+        #blacklist {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Discord Server Tags</h1>
+        <p class="intro">Join over ⚡2,000,000 users currently exploring!</p>
+    </header>
+
+    <center>
+        <a href="https://discord.gg/bpW5jyQ2" target="_blank" class="support-button">🚀 Join the support server</a>
+
+        <div class="submit-section">
+            <h2>Submit a Server Tag</h2>
+            <p>Have a server with a tag that's not listed? Submit it below!</p>
+
+            <form id="tag-submit-form">
+                <div class="input-group">
+                    <label for="server-invite">Discord Server Invite</label>
+                    <input type="text" id="server-invite" placeholder="discord.gg/invite-code or just the invite code"
+                        required>
+                </div>
+
+                <button type="submit" id="submit-button" class="submit-button">Submit Server</button>
+            </form>
+
+            <div id="submission-status" class="submission-status"></div>
+    </center>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Server Tag</th>
+                <th>Member Count</th>
+                <th>Invite</th>
+            </tr>
+        </thead>
+        <tbody id="tabela-tags"></tbody>
+    </table>
+
+    <div id="blacklist">
+        <div>
+            <div>
+                <h3>Add ID</h3>
+                <input type="text" id="add-id" placeholder="Enter ID" />
+                <button onclick="addToBlacklist()">Add</button>
+            </div>
+
+            <div>
+                <h3>Current Blacklist</h3>
+                <ul id="blacklist-list"></ul>
+            </div>
+
+            <div id="message"></div>
+            <hr>
+        </div>
+    </div>
+
+    <button onclick="login()">Admin login</button>
+
+    <script>
+        let password = null;
+
+        const form = document.getElementById('tag-submit-form');
+        const inviteInput = document.getElementById('server-invite');
+        const submitButton = document.getElementById('submit-button');
+        const inviteFeedback = document.getElementById('invite-feedback');
+        const submissionStatus = document.getElementById('submission-status');
+
+        async function getInformation() {
+            const blacklist = await fetch('https://tags.mgcounts.com/api/api/blacklist').then(response => response.json())
+            fetch("https://tags.mgcounts.com/api")
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById("tabela-tags");
+
+                    const quantasSaoNovas = 10;
+
+                    Object.values(data).reverse().forEach((linha, index) => {
+                        if (!blacklist.includes(linha.value)) {
+                            const isNew = index < quantasSaoNovas;
+                            const tr = document.createElement("tr");
+                            const img = `<img class="icon" src="https://cdn.discordapp.com/clan-badges/${linha.serverID}/${linha.tagHash}.png?size=16">`
+                            tr.innerHTML = `
+              <td><div style="display: flex;">${img}${linha.tag}${isNew ? '<span class="new">new</span>' : ''}</div></td>
+              <td>${linha.members.toLocaleString()}</td>
+              <td><a href="https://discord.gg/${linha.value}" target="_blank">🔗 Invite</a></td>
+            `;
+                            tbody.appendChild(tr);
+                        }
+                    });
+                });
+        }
+
+        function extractInviteCode(input) {
+            input = input.trim();
+            if (input.endsWith('/')) {
+                input = input.slice(0, -1);
+            }
+            if (input.includes('discord.gg/')) {
+                return input.split('discord.gg/')[1].split('?')[0].split('#')[0];
+            }
+            if (input.includes('discord.com/invite/')) {
+                return input.split('discord.com/invite/')[1].split('?')[0].split('#')[0];
+            }
+            return input;
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const inviteCode = extractInviteCode(inviteInput.value);
+
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+            submissionStatus.textContent = 'Verifying invite...';
+            submissionStatus.className = 'submission-status loading';
+
+            setTimeout(function () {
+                fetch('https://tags.mgcounts.com/api/submit-server', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ inviteCode: inviteCode })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            submissionStatus.textContent = data.message || 'Success! Server added to our verification queue.';
+                            submissionStatus.className = 'submission-status success';
+                        } else {
+                            submissionStatus.textContent = data.message || 'Error adding server. Please try again.';
+                            submissionStatus.className = 'submission-status error';
+                        }
+                    })
+                    .catch(error => {
+                        submissionStatus.textContent = 'Network error. Please try again later.';
+                        submissionStatus.className = 'submission-status error';
+                        console.error('Error:', error);
+                    })
+                    .finally(() => {
+                        submitButton.textContent = 'Submit Server';
+                        submitButton.disabled = false;
+                    });
+            }, 1500);
         });
-      } catch (e) {
-        container.innerHTML = `<p>Erro ao buscar mensagens: ${e.message}</p>`;
-      }
-    }
-  </script>
+
+
+        async function loadBlacklist() {
+            const res = await fetch('https://tags.mgcounts.com/api/api/blacklist');
+            const list = await res.json();
+            const ul = document.getElementById('blacklist-list');
+            ul.innerHTML = '';
+            list.forEach(id => {
+                const li = document.createElement('li');
+                li.textContent = id + ' ';
+                const btn = document.createElement('button');
+                btn.textContent = 'Remove';
+                btn.onclick = () => removeFromBlacklist(id);
+                li.appendChild(btn);
+                ul.appendChild(li);
+            });
+        }
+
+        async function addToBlacklist() {
+            const id = document.getElementById('add-id').value.trim();
+            if (id && password) {
+                try {
+                    const res = await fetch(`https://tags.mgcounts.com/${password}/api/api/blacklist/add/${id}`, { method: 'POST' });
+                    const data = await res.json();
+                    showMessage(data.message);
+                    document.getElementById('add-id').value = '';
+                    loadBlacklist();
+                } catch {
+                    showMessage('Incorrect password!');
+                }
+            }
+        }
+
+        async function removeFromBlacklist(id) {
+            const res = await fetch(`https://tags.mgcounts.com/${password}/api/api/blacklist/remove/${id}`, { method: 'DELETE' });
+            const data = await res.json();
+            showMessage(data.message);
+            loadBlacklist();
+        }
+
+        function showMessage(msg) {
+            const div = document.getElementById('message');
+            div.textContent = msg;
+            setTimeout(() => div.textContent = '', 3000);
+        }
+
+        getInformation();
+
+        function login() {
+            let div = document.createElement('input');
+            let button = document.createElement('button');
+            div.placeholder = 'password';
+            button.innerText = 'Submit'
+            button.onclick = function () {
+                if (div.value.length > 35) {
+                    password = div.value;
+                    document.getElementById('blacklist').style.display = 'flex';
+                    loadBlacklist();
+                } else {
+                    alert('Incorrect password.');
+                }
+                div.remove();
+                button.remove();
+            }
+            document.body.appendChild(div);
+            document.body.appendChild(button);
+        }
+    </script>
+
 </body>
+
 </html>
