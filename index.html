@@ -14,6 +14,10 @@
             padding: 0;
         }
 
+        center {
+            margin-top: 15px;
+        }
+
         header {
             text-align: center;
             padding: 20px;
@@ -25,22 +29,102 @@
         }
 
         .intro {
-            color: #ccc;
+            margin-top: 10px;
             font-size: 1.2em;
+            color: #ccc;
         }
 
+        .publish-button,
+        .support-button {
+            background-color: #ffcc00;
+            color: #000;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        table {
+            width: 90%;
+            margin: 0 auto 40px auto;
+            border-collapse: collapse;
+            background-color: #2a2a3b;
+            border: 1px solid #444;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+
+        th {
+            background-color: #3a3a4d;
+        }
+
+        tr:hover {
+            background-color: #333348;
+        }
+
+        a {
+            color: #00b7ff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .new {
+            color: red;
+            font-weight: bold;
+            margin-left: 8px;
+            font-size: 0.8em;
+            padding: 2px 5px;
+            background-color: rgba(255, 77, 77, 0.2);
+            border-radius: 4px;
+        }
+
+
+        /* submit form */
         .submit-section {
             background-color: #2b2d31;
             border-radius: 8px;
             padding: 20px;
-            margin: 20px auto;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             width: 75%;
+        }
+
+        .submit-section h2 {
+            color: #5865f2;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .submit-section p {
+            color: #dcddde;
+            margin-bottom: 20px;
+        }
+
+        #tag-submit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
         .input-group {
             display: flex;
             flex-direction: column;
             gap: 5px;
+        }
+
+        .input-group label {
+            color: #dcddde;
+            font-weight: 600;
         }
 
         .input-group input {
@@ -50,6 +134,13 @@
             padding: 12px 16px;
             color: white;
             font-size: 1em;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #5865f2;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.3);
         }
 
         .submit-button {
@@ -61,29 +152,45 @@
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
+            transition: background-color 0.2s ease;
             margin-top: 10px;
         }
 
-        table {
-            width: 90%;
-            margin: 0 auto 40px auto;
-            border-collapse: collapse;
-            background-color: #2a2a3b;
+        .submit-button:hover {
+            background-color: #4752c4;
         }
 
-        th,
-        td {
+        .submit-button:disabled {
+            background-color: #3c3f5c;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .submission-status {
+            margin-top: 15px;
             padding: 12px;
-            border-bottom: 1px solid #444;
-            text-align: left;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
         }
 
-        th {
-            background-color: #3a3a4d;
+        .submission-status.loading {
+            display: block;
+            background-color: #36393f;
+            color: #dcddde;
         }
 
-        tr:hover {
-            background-color: #333348;
+        .submission-status.success {
+            display: block;
+            background-color: #43b581;
+            color: white;
+        }
+
+        .submission-status.error {
+            display: block;
+            background-color: #f04747;
+            color: white;
         }
 
         #search-box {
@@ -98,37 +205,63 @@
             color: white;
         }
 
-        .new {
-            color: #ff4d4d;
-            font-weight: bold;
-            margin-left: 8px;
-            font-size: 0.8em; /* Ajuste para não ficar demasiado grande */
-            padding: 2px 5px;
-            background-color: rgba(255, 77, 77, 0.2);
-            border-radius: 4px;
+        @media (max-width: 768px) {
+            .submit-section {
+                padding: 15px;
+                margin: 15px 0;
+            }
+
+            .submit-section h2 {
+                font-size: 1.5em;
+            }
+
+            .input-group input,
+            .submit-button {
+                padding: 10px 14px;
+            }
+        }
+
+        .icon {
+            margin-right: 5px;
+            height: 16px;
+            width: 16px;
+        }
+
+        #blacklist {
+            display: none;
         }
     </style>
 </head>
 
 <body>
+
     <header>
         <h1>Discord Server Tags</h1>
-        <p class="intro">Junte-se a mais de ⚡2,000,000 de utilizadores a explorar!</p>
+        <p class="intro">Join over ⚡2,000,000 users currently exploring!</p>
     </header>
 
     <center>
+        <a href="https://discord.gg/bpW5jyQ2" target="_blank" class="support-button">🚀 Join the support server</a>
+
         <div class="submit-section">
-            <h2>Submeta uma Tag de Servidor</h2>
+            <h2>Submit a Server Tag</h2>
+            <p>Have a server with a tag that's not listed? Submit it below!</p>
+
             <form id="tag-submit-form">
                 <div class="input-group">
-                    <label for="server-tag">Discord Server Tag</label>
-                    <input type="text" id="server-tag" placeholder="Ex: Gaming, Música, Chill..." required>
+                    <label for="server-invite">Discord Server Invite</label>
+                    <input type="text" id="server-invite" placeholder="discord.gg/invite-code or just the invite code"
+                        required>
                 </div>
-                <button type="submit" id="submit-button" class="submit-button">Adicionar Tag</button>
+
+                <button type="submit" id="submit-button" class="submit-button">Submit Server</button>
             </form>
+
+            <div id="submission-status" class="submission-status"></div>
         </div>
 
         <input type="text" id="search-box" placeholder="🔍 Pesquise por uma tag...">
+
     </center>
 
     <table>
@@ -136,97 +269,232 @@
             <tr>
                 <th>Server Tag</th>
                 <th>Membros</th>
+                <th>Convite</th>
             </tr>
         </thead>
-        <tbody id="tabela-tags"></tbody>
+        <tbody id="tabela-tags">
+            </tbody>
     </table>
 
+    <div id="blacklist">
+        <div>
+            <div>
+                <h3>Add ID</h3>
+                <input type="text" id="add-id" placeholder="Enter ID" />
+                <button onclick="addToBlacklist()">Add</button>
+            </div>
+
+            <div>
+                <h3>Current Blacklist</h3>
+                <ul id="blacklist-list"></ul>
+            </div>
+
+            <div id="message"></div>
+            <hr>
+        </div>
+    </div>
+
+    <button onclick="login()">Admin login</button>
+
     <script>
-        const form = document.getElementById("tag-submit-form");
+        let password = null;
+        let allTags = []; // Armazenar os dados da API aqui
+
+        const form = document.getElementById('tag-submit-form');
         const tabela = document.getElementById("tabela-tags");
-        const searchBox = document.getElementById("search-box");
-        const inputTag = document.getElementById("server-tag"); // Referência para o input
+        const inviteInput = document.getElementById('server-invite');
+        const submitButton = document.getElementById('submit-button');
+        const submissionStatus = document.getElementById('submission-status');
+        const searchBox = document.getElementById("search-box"); // Referência para a caixa de pesquisa
 
-        // Tags de exemplo para mostrar algo na primeira vez (se não houver tags no localStorage)
-        const defaultTags = [
-            { name: "Gaming", members: 150000 },
-            { name: "Música", members: 85000 },
-            { name: "Chill", members: 42000 },
-            { name: "Programação", members: 21000 }
-        ];
-
-        // Carregar tags do localStorage ou usar as tags padrão
-        let tags = JSON.parse(localStorage.getItem("tags")) || defaultTags;
-
-        // Variável para controlar qual tag é "nova" (usamos o índice 0 da array para simplificar)
-        let newTagAdded = false;
-
-        // Função para exibir tags
+        // Função para exibir as tags (agora aceita um filtro)
         function displayTags(filter = "") {
-            tabela.innerHTML = ""; // Limpa a tabela antes de re-exibir
-            
-            // Filtra as tags
-            let filteredTags = tags.filter(tag => tag.name.toLowerCase().includes(filter.toLowerCase()));
+            tabela.innerHTML = ''; // Limpa a tabela
+            const quantasSaoNovas = 10;
+            const filterLower = filter.toLowerCase();
 
-            filteredTags.forEach((tag, index) => {
-                const tr = document.createElement("tr");
-                let newSpan = '';
+            // 1. Filtra os dados com base no texto de pesquisa
+            let filteredTags = allTags.filter(linha => linha.tag.toLowerCase().includes(filterLower));
+
+            // 2. Itera sobre os dados filtrados e adiciona-os à tabela
+            filteredTags.forEach((linha, index) => {
+                // Aqui removemos o blacklist check, pois o getInformation deve ter a lista completa,
+                // a menos que queira filtrar a blacklist localmente (ver nota abaixo).
                 
-                // Se a tag for a primeira da array e newTagAdded for true (significa que foi adicionada agora)
-                // OU se estiver a ser exibida e for a primeira na lista filtrada (mais simples)
-                if (index === 0 && !filter && newTagAdded) {
-                    newSpan = '<span class="new">NEW</span>';
-                }
-
+                // O marcador "new" aparece nas primeiras X tags, mas apenas se não houver filtro.
+                const isNew = !filter && index < quantasSaoNovas; 
+                
+                const tr = document.createElement("tr");
+                const img = `<img class="icon" src="https://cdn.discordapp.com/clan-badges/${linha.serverID}/${linha.tagHash}.png?size=16">`
+                
                 tr.innerHTML = `
-                    <td>${tag.name}${newSpan}</td>
-                    <td>${tag.members.toLocaleString('pt-PT')}</td>
+                    <td><div style="display: flex; align-items: center;">${img}${linha.tag}${isNew ? '<span class="new">NEW</span>' : ''}</div></td>
+                    <td>${linha.members.toLocaleString('pt-PT')}</td>
+                    <td><a href="https://discord.gg/${linha.value}" target="_blank">🔗 Convite</a></td>
                 `;
                 tabela.appendChild(tr);
             });
-            
-            // Depois de exibir a primeira vez após a adição, remove a marca "new" na próxima vez que a lista for re-exibida (sem recarregar a página)
-            if (newTagAdded && !filter) {
-                // A marca NEW só aparece na primeira vez que o utilizador adiciona sem filtro
-                // Para manter a marca "NEW" visível até o utilizador recarregar ou adicionar outra, comente esta linha:
-                // newTagAdded = false; 
+        }
+
+        // Função para carregar dados da API
+        async function getInformation() {
+            try {
+                // Busca a blacklist primeiro
+                const blacklistRes = await fetch('https://tags.mgcounts.com/api/api/blacklist');
+                const blacklist = await blacklistRes.json();
+                
+                // Busca as tags
+                const tagsRes = await fetch("https://tags.mgcounts.com/api");
+                const data = await tagsRes.json();
+                
+                // Filtra as tags removendo as que estão na blacklist (usando o ID do servidor: serverID)
+                // Nota: O seu código original filtrava por 'value' (código de convite). Ajustei para 'serverID' se a blacklist for de IDs. 
+                // Se a blacklist for de códigos de convite, use `linha.value` no `!blacklist.includes(...)`.
+                const filteredData = Object.values(data)
+                    .reverse() // Coloca as mais recentes (assumindo que estão no final) no topo
+                    .filter(linha => !blacklist.includes(linha.serverID)); 
+                
+                allTags = filteredData; // Armazena a lista global
+                displayTags(); // Exibe todas as tags carregadas
+            } catch (error) {
+                console.error("Erro ao carregar dados da API:", error);
+                tabela.innerHTML = '<tr><td colspan="3">Erro ao carregar as tags do servidor. Tente novamente mais tarde.</td></tr>';
             }
         }
 
-        // Adicionar nova tag
-        form.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const tagName = inputTag.value.trim();
-            if (tagName === "") return;
-
-            const newTag = {
-                name: tagName,
-                // Gera um número aleatório entre 1.000 e 50.999
-                members: Math.floor(Math.random() * 50000) + 1000 
-            };
-
-            // Adiciona nova tag no início (primeiro da lista, para ser o "NEW")
-            tags.unshift(newTag);
-            localStorage.setItem("tags", JSON.stringify(tags));
-            
-            newTagAdded = true; // Marca que uma nova tag foi adicionada
-            form.reset(); // Limpa o campo de input
-            displayTags(); // Re-exibe a tabela
-
-            // Remove o foco da caixa de texto para que a marca NEW fique visível imediatamente
-            searchBox.value = ''; 
-        });
-
-        // Filtro de busca
+        // NOVO: Adiciona o evento de pesquisa
         searchBox.addEventListener("input", (e) => {
-            // Remove a marca "NEW" durante a pesquisa
-            newTagAdded = false;
             displayTags(e.target.value);
         });
-        
-        // --- Inicializa tabela ---
-        displayTags();
+
+        // O seu código de submissão (submit) e de administrador (blacklist) permanece o mesmo
+        function extractInviteCode(input) {
+            input = input.trim();
+            if (input.endsWith('/')) {
+                input = input.slice(0, -1);
+            }
+            if (input.includes('discord.gg/')) {
+                return input.split('discord.gg/')[1].split('?')[0].split('#')[0];
+            }
+            if (input.includes('discord.com/invite/')) {
+                return input.split('discord.com/invite/')[1].split('?')[0].split('#')[0];
+            }
+            return input;
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const inviteCode = extractInviteCode(inviteInput.value);
+
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+            submissionStatus.textContent = 'Verifying invite...';
+            submissionStatus.className = 'submission-status loading';
+
+            setTimeout(function () {
+                fetch('https://tags.mgcounts.com/api/submit-server', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ inviteCode: inviteCode })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            submissionStatus.textContent = data.message || 'Success! Server added to our verification queue.';
+                            submissionStatus.className = 'submission-status success';
+                            // Tenta recarregar a lista para ver a nova tag (se for aprovada rapidamente)
+                            getInformation(); 
+                        } else {
+                            submissionStatus.textContent = data.message || 'Error adding server. Please try again.';
+                            submissionStatus.className = 'submission-status error';
+                        }
+                    })
+                    .catch(error => {
+                        submissionStatus.textContent = 'Network error. Please try again later.';
+                        submissionStatus.className = 'submission-status error';
+                        console.error('Error:', error);
+                    })
+                    .finally(() => {
+                        submitButton.textContent = 'Submit Server';
+                        submitButton.disabled = false;
+                    });
+            }, 1500);
+        });
+
+
+        async function loadBlacklist() {
+            const res = await fetch('https://tags.mgcounts.com/api/api/blacklist');
+            const list = await res.json();
+            const ul = document.getElementById('blacklist-list');
+            ul.innerHTML = '';
+            list.forEach(id => {
+                const li = document.createElement('li');
+                li.textContent = id + ' ';
+                const btn = document.createElement('button');
+                btn.textContent = 'Remove';
+                btn.onclick = () => removeFromBlacklist(id);
+                li.appendChild(btn);
+                ul.appendChild(li);
+            });
+        }
+
+        async function addToBlacklist() {
+            const id = document.getElementById('add-id').value.trim();
+            if (id && password) {
+                try {
+                    const res = await fetch(`https://tags.mgcounts.com/${password}/api/api/blacklist/add/${id}`, { method: 'POST' });
+                    const data = await res.json();
+                    showMessage(data.message);
+                    document.getElementById('add-id').value = '';
+                    loadBlacklist();
+                    getInformation(); // Recarrega as tags para aplicar a blacklist
+                } catch {
+                    showMessage('Incorrect password!');
+                }
+            }
+        }
+
+        async function removeFromBlacklist(id) {
+            const res = await fetch(`https://tags.mgcounts.com/${password}/api/api/blacklist/remove/${id}`, { method: 'DELETE' });
+            const data = await res.json();
+            showMessage(data.message);
+            loadBlacklist();
+            getInformation(); // Recarrega as tags para aplicar a blacklist
+        }
+
+        function showMessage(msg) {
+            const div = document.getElementById('message');
+            div.textContent = msg;
+            setTimeout(() => div.textContent = '', 3000);
+        }
+
+        // Chama a função principal para carregar as tags ao iniciar
+        getInformation();
+
+        function login() {
+            let div = document.createElement('input');
+            let button = document.createElement('button');
+            div.placeholder = 'password';
+            button.innerText = 'Submit'
+            button.onclick = function () {
+                if (div.value.length > 35) {
+                    password = div.value;
+                    document.getElementById('blacklist').style.display = 'flex';
+                    loadBlacklist();
+                } else {
+                    alert('Incorrect password.');
+                }
+                div.remove();
+                button.remove();
+            }
+            document.body.appendChild(div);
+            document.body.appendChild(button);
+        }
     </script>
+
 </body>
 
 </html>
