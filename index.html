@@ -305,31 +305,36 @@
         const inviteInput = document.getElementById('server-invite');
         const submitButton = document.getElementById('submit-button');
         const submissionStatus = document.getElementById('submission-status');
-        const searchBox = document.getElementById("search-box"); // Referência para a caixa de pesquisa
+        const searchBox = document.getElementById("search-box");
 
-        // Função para exibir as tags (agora aceita um filtro)
+        // Função para exibir as tags (aceita um filtro)
         function displayTags(filter = "") {
             tabela.innerHTML = ''; // Limpa a tabela
             const quantasSaoNovas = 10;
             const filterLower = filter.toLowerCase();
 
             // 1. Filtra os dados com base no texto de pesquisa
-            let filteredTags = allTags.filter(linha => linha.tag.toLowerCase().includes(filterLower));
+            let filteredTags = allTags.filter(linha => linha.tag && linha.tag.toLowerCase().includes(filterLower));
 
             // 2. Itera sobre os dados filtrados e adiciona-os à tabela
+            if (filteredTags.length === 0 && allTags.length > 0) {
+                 tabela.innerHTML = '<tr><td colspan="3">Nenhuma tag encontrada com a pesquisa atual.</td></tr>';
+                 return;
+            } else if (allTags.length === 0) {
+                 tabela.innerHTML = '<tr><td colspan="3">Nenhuma tag para exibir.</td></tr>';
+                 return;
+            }
+
             filteredTags.forEach((linha, index) => {
-                // Aqui removemos o blacklist check, pois o getInformation deve ter a lista completa,
-                // a menos que queira filtrar a blacklist localmente (ver nota abaixo).
-                
-                // O marcador "new" aparece nas primeiras X tags, mas apenas se não houver filtro.
-                const isNew = !filter && index < quantasSaoNovas; 
+                // O marcador "new" aparece nas primeiras X tags (as mais recentes) se não houver filtro.
+                const isNew = !filter && index < quantasSaoNovas;
                 
                 const tr = document.createElement("tr");
                 const img = `<img class="icon" src="https://cdn.discordapp.com/clan-badges/${linha.serverID}/${linha.tagHash}.png?size=16">`
                 
                 tr.innerHTML = `
                     <td><div style="display: flex; align-items: center;">${img}${linha.tag}${isNew ? '<span class="new">NEW</span>' : ''}</div></td>
-                    <td>${linha.members.toLocaleString('pt-PT')}</td>
+                    <td>${linha.members ? linha.members.toLocaleString('pt-PT') : 'N/A'}</td>
                     <td><a href="https://discord.gg/${linha.value}" target="_blank">🔗 Convite</a></td>
                 `;
                 tabela.appendChild(tr);
@@ -338,36 +343,49 @@
 
         // Função para carregar dados da API
         async function getInformation() {
+            tabela.innerHTML = '<tr><td colspan="3">A carregar tags...</td></tr>'; // Mensagem de carregamento
+
             try {
                 // Busca a blacklist primeiro
                 const blacklistRes = await fetch('https://tags.mgcounts.com/api/api/blacklist');
+                if (!blacklistRes.ok) throw new Error("Erro ao carregar a blacklist.");
                 const blacklist = await blacklistRes.json();
                 
                 // Busca as tags
                 const tagsRes = await fetch("https://tags.mgcounts.com/api");
+                if (!tagsRes.ok) throw new Error("Erro ao carregar os dados das tags.");
                 const data = await tagsRes.json();
+
+                if (typeof data !== 'object' || data === null) {
+                    throw new Error("Formato de dados da API inesperado.");
+                }
                 
-                // Filtra as tags removendo as que estão na blacklist (usando o ID do servidor: serverID)
-                // Nota: O seu código original filtrava por 'value' (código de convite). Ajustei para 'serverID' se a blacklist for de IDs. 
-                // Se a blacklist for de códigos de convite, use `linha.value` no `!blacklist.includes(...)`.
-                const filteredData = Object.values(data)
-                    .reverse() // Coloca as mais recentes (assumindo que estão no final) no topo
-                    .filter(linha => !blacklist.includes(linha.serverID)); 
+                let tagArray = Object.values(data);
+                
+                // Inverte para colocar as tags mais recentes no topo (assumindo que o objeto JSON tem as mais recentes no final)
+                tagArray.reverse();
+                
+                // Filtra as tags removendo as que estão na blacklist
+                const filteredData = tagArray.filter(linha => linha.serverID && !blacklist.includes(linha.serverID)); 
                 
                 allTags = filteredData; // Armazena a lista global
                 displayTags(); // Exibe todas as tags carregadas
+
             } catch (error) {
                 console.error("Erro ao carregar dados da API:", error);
-                tabela.innerHTML = '<tr><td colspan="3">Erro ao carregar as tags do servidor. Tente novamente mais tarde.</td></tr>';
+                tabela.innerHTML = `<tr><td colspan="3">Erro ao carregar as tags do servidor: ${error.message}.</td></tr>`;
+                allTags = []; // Limpa a lista em caso de erro
             }
         }
 
-        // NOVO: Adiciona o evento de pesquisa
+        // Evento de pesquisa em tempo real
         searchBox.addEventListener("input", (e) => {
             displayTags(e.target.value);
         });
 
-        // O seu código de submissão (submit) e de administrador (blacklist) permanece o mesmo
+        // =========================================================================
+        // Funções de Submissão e Admin (Mantidas)
+        // =========================================================================
         function extractInviteCode(input) {
             input = input.trim();
             if (input.endsWith('/')) {
@@ -405,8 +423,7 @@
                         if (data.success) {
                             submissionStatus.textContent = data.message || 'Success! Server added to our verification queue.';
                             submissionStatus.className = 'submission-status success';
-                            // Tenta recarregar a lista para ver a nova tag (se for aprovada rapidamente)
-                            getInformation(); 
+                            getInformation(); // Tenta recarregar a lista
                         } else {
                             submissionStatus.textContent = data.message || 'Error adding server. Please try again.';
                             submissionStatus.className = 'submission-status error';
@@ -471,9 +488,6 @@
             setTimeout(() => div.textContent = '', 3000);
         }
 
-        // Chama a função principal para carregar as tags ao iniciar
-        getInformation();
-
         function login() {
             let div = document.createElement('input');
             let button = document.createElement('button');
@@ -493,6 +507,9 @@
             document.body.appendChild(div);
             document.body.appendChild(button);
         }
+        
+        // --- Inicialização ---
+        getInformation();
     </script>
 
 </body>
